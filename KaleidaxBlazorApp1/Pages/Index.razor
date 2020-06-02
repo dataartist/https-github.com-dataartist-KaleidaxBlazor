@@ -1,0 +1,237 @@
+﻿@page "/"
+@inject IJSRuntime jsRuntime
+@inject HttpClient Http
+
+@using System.Threading;
+
+<section id="audiotracks">
+    @foreach (var scope in scopes)
+    {
+<audio id="audio@(scope.Index)" loop preload="auto"><source id="playerSource@(scope.Index)" src="@scope.AudioUrl" /></audio>}
+</section>
+
+<div id="header-wrap" style="margin-left: -33px">
+    <div id="header">
+        <table>
+            <tr>
+                <td><img id="logo" class="@swingLogo" src="images/logoSmall.png" /></td>
+                <td class="@appTitle">kaleidax</td>
+                <td><img id="library" class="@library" src="images/library.png" alt="Library" @onclick="(() => ClickLibrary())" /></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div>
+    <table id="scopes" style="display:table-row; visibility: @visibility; white-space: nowrap; position:absolute; top:15%; height:20em; margin-top:-2em;">
+        <tr style="padding:10px;">
+            @foreach (var scope in scopes)
+            {
+<td style="padding:10px;">
+    <div>
+        <section class="@kaleidax" imagepath="@scope.ImageUrl" id="k@(scope.Index)">
+            <div class="@kFrame @(scope.RotatingClass)" @onmousemove="(() => SetScope(scope))">
+                <div class="@kSectors">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+    <div class="@sectors(i)" @onmousemove="ScopeMouseMove">
+        <canvas class="@kImage" style="background: url('@scope.ImageUrl'); @(scope.BackgroundPositions)"></canvas>
+    </div>}
+                </div>
+            </div>
+        </section>
+        <div style="padding:5px;" align="center">
+            <table class="@tools">
+                <tr>
+                    <td width="70px" @onclick="(() => ClickPlayAnimation(scope))">
+                        <img class="animate" src="@scope.AnimationImage" alt="Animate" />
+                    </td>
+                    <td width="70px" @onclick="(() => ClickRotate(scope))">
+                        <img class="rotate" src="@scope.RotateImage" alt="Rotate" />
+                    </td>
+                    <td width="70px" @onclick="(() => ClickPlayAudio(scope))">
+                        <img class="audio" src="@scope.AudioImage" alt="Sound" />
+                    </td>
+                    <td width="70px" @onclick="(() => ClickAttachImage(scope))">
+                        <img class="attachImage" src="@scope.AttachImage" alt="Attach Image" />
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <input class="@scope.AttachingImageClass" spellcheck="false" style="visibility: @scope.AttachingImageVisible" type="url" @bind="@scope.ImageUrl" />
+            </div>
+        </div>
+    </div>
+</td>
+       }
+        </tr>
+    </table>
+</div>
+
+<table id="history" class="@readPaper" style="position: absolute; top: 100px; visibility:@readPaperVisibility;" cellspacing="40">
+    <tr>
+        <td>
+            <section style="text-align: left; font-size: 25px; font-weight: 800">Kaleidoscopes</section>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="vertical-align:top; padding-right: 30px;">
+            <div style="max-width: 500px;text-align: justify;">
+                <table><tr><td width="25px"><img style="width: 20px; height: 20px;" src="images/StoreLogo.png" /></td><td><section style="font-size: 15px; font-weight: 600; ">How They Work</section></td></tr></table>
+                <br />The kaleidoscope's goal is to create a viewable series of reflections at the end of a container. The image will be symmetrical if the mirror angle is an even divisor of 360 degrees. A mirror set at 60 degrees will generate a pattern of six regular sectors. A mirror angle at 45 degrees will make eight equal sectors, and an angle of 30 degrees will make twelve sectors. The lines and colors of simple shapes are visually multiplied by the mirrors into a stunning visual vortex.
+                The containers or object holders that form the housing of kaleidoscopes can be of several different designs. Most common are cells, thin, round boxes or chambers that have enough room for the items to move. Sometimes the objects are suspended in a liquid, but cells are also frequently dry. Object holders may also be tube-shaped. Some cells are built into the kaleidoscope body; others are attached to the outside or slid into the side. Some are interchangeable, or open, allowing the viewer to add different objects. All of these are made of a transparent material, like glass or plastic, allowing the items inside to be viewed. A source of light is required to illuminate the objects; often sunlight or a lamp behind the object holder is enough to produce the desired effect, but sometimes a light is built into the device to make it self-contained.
+            </div>
+        </td>
+
+        <td style="vertical-align:top; padding-right: 30px;">
+            <div style="max-width: 500px;text-align: justify;">
+                <table><tr><td width="25px"><img style="width: 20px; height: 20px;" src="images/StoreLogo.png" /></td><td><section style="font-size: 15px; font-weight: 600; ">The Inventor</section></td></tr></table>
+                <br />The Kaleidoscope was invented in 1816 by Sir David Brewster from Scotland. He was researching physical sciences including polarization optics and the properties of light. While looking at objects at the end of two mirrors he noticed patterns and colors were recreated and reformed into beautiful new reflective arrangements. David Brewster was the first to arrange mirrors and objects in a tube and call it a kaleidoscope. He named his invention after the Greek words, kalos or beautiful, eidos or form, and scopos or watcher. Kaleidoscope means the beautiful form watcher.
+                In 1817 Mr. Brewster patented his idea but the wording in the patent document contained some errors that made it easy for others to copy and left him without much in the way of legal recourse. David Brewster was also instrumental in many other light and optical scientific advances including a lens design for lighthouses.
+            </div>
+        </td>
+
+        <td style="vertical-align:top;">
+            <div style="max-width: 500px;text-align: justify;">
+                <table><tr><td width="25px"><img style="width: 20px; height: 20px;" src="images/StoreLogo.png" /></td><td><section style="font-size: 15px; font-weight: 600; ">Through the Ages</section></td></tr></table>
+                <br />Volcanic glass has been used as mirrors for thousands of years. Mirror reflected sunlight or fire was used in early lighthouses, and there's record of an optical illusion by ancient Egyptian magicians involving mirrors. By the early 17th century an ornate corridor with 357 mirrors known as the "Hall of Mirrors" adorned the Palace of Versailles and represented the society of the royal French court. Every movement, nod, and glance near the "Hall of Mirrors" was reflected hundreds of times at the amusement of the on lookers. Mirrors also may have helped achieve symmetry in planning ornamental gardens, a step in the direction toward the kaleidoscope.
+                In the early 1800s, scientists were exploring concepts of light and optics. Devices known as philosophical toys became a form of visual amusement for the general public. Not just a toy, the device also was intended for use by designers and artists, who hopefully would be inspired by the beautiful patterns they could create.
+                Kaleidoscope technology made a leap forward in 1873 when American Charles Bush patented several improvements. He added a stand that could be easily disassembled allowing portability and a rotating wheel to expand the variety of possible designs. Perhaps Bush's most ingenious advancement came in the form of special ampoules. An ampoule is a small, sealed glass vial often holding medicine. Tiny ampoules already had been used as objects in some kaleidoscopes but Bush's patent described ampules with two or more liquids of different densities or a liquid with suspended solid components. Bush further required that the liquids within the ampoules should be unable to mix together and each would have its own specific color. This allowed for even more intricate designs and patterns.
+                Entertainment hit the high-tech big-time over the next century. Radio, motion pictures and television pushed kaleidoscopes mainly into children's hands. That is, until an exhibition at Maryland's Strathmore Hall Arts Center in 1985 included more than 100 kaleidoscopes and drew great interest. The establishment of the Brewster Kaleidoscope Society for kaleidoscope enthusiasts soon followed. Today, the society numbers about 125 kaleidoscope artists among its members.
+            </div>
+        </td>
+    </tr>
+</table>
+
+@code { private string kaleidax { get; set; } = "kaleidax";
+    private string library { get; set; } = "library swing animated animationend";
+    private string readPaper { get; set; }
+    private string readPaperVisibility { get; set; } = "hidden";
+    private string tools { get; set; }
+    private string swingLogo { get { return "swing animated animationend"; } }
+    private string appTitle { get { return "appTitle rubberBand animated animationend"; } }
+    private string spinScope { get { return "swing animated animationend"; } }
+    private string kImage { get; set; } = "kImage";
+    private string kFrame { get; set; } = "kFrame";
+    private string kSectors { get; set; } = "kSectors";
+    private string sector { get { return "sector"; } }
+    private string sectors(int sector) { return $"sector sector{sector}"; }
+    private string visibility { get; set; } = "hidden";
+    private const string positionX = "background-Position-x:";
+    private const string positionY = "background-Position-y:";
+    private Scope CurrentScope { get; set; }
+    private List<Scope> scopes = new List<Scope>();
+
+    protected override async Task OnInitializedAsync() {
+        scopes = (await Http.GetJsonAsync<ImagePath[]>("Kaleidax.json")).ToScopes();
+        StateHasChanged();
+        SlideIn();
+    }
+
+    private async Task ClickLibrary() {
+        TurnOffAllAttachImagePrompts();
+        if (readPaperVisibility == "visible")
+        {
+            kaleidax = "kaleidax bounceInRight animated";
+            tools = "bounceInRight animated";
+            readPaper = "bounceOutDown animated";
+            await Task.Delay(1000);
+            readPaperVisibility = "hidden";
+            return;
+        }
+
+        readPaper = "bounceInUp animated";
+        kaleidax = "kaleidax bounceOutUp animated";
+        tools = "bounceOutUp animated";
+        readPaperVisibility = "visible";
+    }
+
+    private async Task ClickPlayAnimation(Scope scope) {
+        TurnOffAllAttachImagePrompts();
+        scope.IsAnimationPlaying = !scope.IsAnimationPlaying;
+        scope.AnimationImage = scope.AnimationImage.ToggleImage();
+
+        if (scope.IsAnimationPlaying)
+        {
+            if (!scopes.Any(s => s.Index != scope.Index && s.IsAnimationPlaying == true))
+            {
+                await Animate();
+            }
+        }
+    }
+
+    private async Task SetScope(Scope scope) { CurrentScope = scope; }
+
+    private async Task ScopeMouseMove(MouseEventArgs args) {
+        if (CurrentScope == null) return;
+        CurrentScope.SquenceX = args.ScreenX;
+        CurrentScope.SquenceY = args.ScreenY;
+        CurrentScope.BackgroundPositions = $"{positionX} {args.ScreenX}px; {positionY} { args.ScreenY}px;";
+        StateHasChanged();
+    }
+
+    public async Task Animate() {
+        bool found;
+        do
+        {
+            found = false;
+            foreach (var scope in scopes.Where(s => s.IsAnimationPlaying == true))
+            {
+                scope.SquenceX += scope.SpeedX;
+                if (scope.SquenceX >= scope.Limit || scope.SquenceX <= 0)
+                {
+                    scope.SpeedX = -scope.SpeedX;
+                    scope.SquenceX += scope.SpeedX;
+                }
+
+                scope.SquenceY += scope.SpeedY;
+                if (scope.SquenceY >= scope.Limit || scope.SquenceY <= 0)
+                {
+                    scope.SpeedY = -scope.SpeedY;
+                    scope.SquenceY += scope.SpeedY;
+                }
+
+                scope.BackgroundPositions = $"{positionX} {scope.SquenceX}px; {positionY} {scope.SquenceY}px;";
+                found = true;
+                if (scope.IsRotating) Thread.Sleep(1);
+            }
+
+            StateHasChanged();
+            await Task.Delay(1);
+        } while (found);
+    }
+
+    private async Task ClickPlayAudio(Scope scope) {
+        TurnOffAllAttachImagePrompts();
+        scope.IsAudioPlaying = !scope.IsAudioPlaying;
+        scope.AudioImage = scope.AudioImage.ToggleImage();
+        StateHasChanged();
+        await jsRuntime.InvokeVoidAsync("PlayAudio", $"audio{scope.Index}", scope.IsAudioPlaying);
+    }
+
+    private async Task ClickRotate(Scope scope) {
+        TurnOffAllAttachImagePrompts();
+        scope.IsRotating = !scope.IsRotating;
+        scope.RotateImage = scope.RotateImage.ToggleImage();
+    }
+
+    private async Task ClickAttachImage(Scope scope) {
+        TurnOffAllAttachImagePrompts(scope);
+        scope.IsAttachingImage = !scope.IsAttachingImage;
+        scope.AttachImage = scope.AttachImage.ToggleImage();
+    }
+
+    private void TurnOffAllAttachImagePrompts(Scope filerScope = null) {
+        foreach (var scope in scopes.Where(s => s != filerScope))
+        {
+            scope.IsAttachingImage = false;
+            scope.AttachImage = scope.AttachImage.ToggleImage(forceOff: true);
+        }
+    }
+
+    private void SlideIn() {
+        visibility = "visible";
+        kaleidax = "kaleidax bounceInRight animated";
+        tools = "bounceInRight animated";
+    } }
