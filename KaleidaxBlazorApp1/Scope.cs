@@ -36,6 +36,7 @@ namespace KaleidaxBlazorApp1
             SquenceY = new Random().Next(1, Limit);
         }
     }
+
     public class ImagePath
     {
         public string ImageUrl { get; set; }
