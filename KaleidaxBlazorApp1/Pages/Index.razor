@@ -8,7 +8,8 @@
 <section id="audiotracks">
     @foreach (var scope in scopes)
     {
-        <audio id="audio@(scope.Index)" loop preload="auto"><source id="playerSource@(scope.Index)" src="@scope.AudioUrl" /></audio>}
+        <audio id="audio@(scope.Index)" loop preload="auto"><source id="playerSource@(scope.Index)" src="@scope.AudioUrl" /></audio>
+    }
 </section>
 
 <div id="header-wrap" style="margin-left: -33px">
@@ -246,4 +247,5 @@
         visibility = "visible";
         kaleidax = "kaleidax bounceInRight animated";
         tools = "bounceInRight animated";
-    } }
+    }
+}
